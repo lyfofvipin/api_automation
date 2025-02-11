@@ -19,7 +19,6 @@ class PrepareCollection():
     def collect_templates(self) -> None:
         self.collection_template: dict = self.get_json_data_from_file( self.collection_template )
         self.testsuite_api_template: dict = self.get_json_data_from_file( self.testsuite_api_template )
-        self.api_test_template: dict = self.get_json_data_from_file( self.api_test_template )
 
     def get_testdata(self) -> json:
         if self.tests_yaml_data:
@@ -30,8 +29,8 @@ class PrepareCollection():
         with open(file_path, "r") as js_tests:
             return js_tests.readlines()
 
-    def give_me_a_testcase(self, name: str, method: str, endpoint: str, js_testcase_file_path: str, body_raw: dict = {}):
-        api_template = self.api_test_template.copy()
+    def give_me_a_testcase(self, name: str, method: str, endpoint: str, js_testcase_file_path: str, body_raw: dict = {}) -> dict:
+        api_template = self.get_json_data_from_file(self.api_test_template)
         api_template["name"] = name
         api_template["request"]["method"] = method
         api_template["request"]["url"]["raw"] = endpoint
@@ -42,7 +41,7 @@ class PrepareCollection():
         else:
             api_template["request"]["url"]["host"] = endpoint.split("/")[0]
             api_template["request"]["url"]["path"] = endpoint.split("/")[1:]
-        if method == "POST":
+        if method == "POST" and body_raw:
             api_template["request"]["body"]["raw"] = body_raw
         return api_template
 
@@ -50,7 +49,6 @@ class PrepareCollection():
         testsuites_collection = []
         for x in self.tests_yaml_data:
             if x != "CollectionName":
-                print(x)
                 gather_testcase = self.give_me_a_testcase( \
                     self.tests_yaml_data.get(x).get("name"),\
                     self.tests_yaml_data.get(x).get("method"),\
@@ -58,18 +56,22 @@ class PrepareCollection():
                     self.tests_yaml_data.get(x).get("js_testcase_file_path"),\
                     self.tests_yaml_data.get(x).get("body_raw")\
                 )
-                print(gather_testcase)
-                print()
                 testsuites_collection.append(gather_testcase)
-        print(testsuites_collection)
         return testsuites_collection
 
     def combine_testsuites(self):
-        self.collection_template["info"]["name"] = self.tests_yaml_data.get("CollectionName")
-        self.prepare_testsuite()
-        # self.collection_template["item"] = self.prepare_testsuite()
-        # print(json.dumps(self.collection_template))
-        # return json.dumps(self.collection_template)
+        if self.collection_template["info"]["name"] == "dummy_testsuite_name":
+            self.collection_template["info"]["name"] = self.tests_yaml_data.get("CollectionName")
+            self.collection_template["item"] = self.prepare_testsuite()
+        else:
+            self.collection_template["item"].append(self.prepare_testsuite())
+        print(json.dumps(self.collection_template))
+        return json.dumps(self.collection_template)
+
+    def dump_json_in_a_file(self):
+        collection = self.combine_testsuites()
+        with open("NewCollection.json") as collection_file:
+            collection_file.write(collection)
 
 if __name__ == "__main__":
     print("""
@@ -87,4 +89,4 @@ if __name__ == "__main__":
     generate_tests = PrepareCollection(TEST_SUITE_FILE, EXISTING_COLLECTION)
     generate_tests.collect_templates()
     generate_tests.get_testdata()
-    generate_tests.combine_testsuites()
+    generate_tests.dump_json_in_a_file()
