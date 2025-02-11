@@ -1,0 +1,11 @@
+{
+	"name": "test",
+	"values": [
+		{
+			"key": "testurl",
+			"value": "endpoint",
+			"type": "default",
+			"enabled": true
+		}
+	]
+}

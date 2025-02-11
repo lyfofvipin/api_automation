@@ -1,0 +1,40 @@
+{
+    "name": "dummy_testcase_name",
+    "event": [
+        {
+            "listen": "test",
+            "script": {
+                "exec": ["Need to put some testcases here"],
+                "type": "text/javascript",
+                "packages": {}
+            }
+        }
+    ],
+    "protocolProfileBehavior": {
+        "strictSSL": true,
+        "protocolVersion": "http2"
+    },
+    "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+            "mode": "raw",
+            "raw": "{}",
+            "options": {
+                "raw": {
+                    "language": "json"
+                }
+            }
+        },
+        "url": {
+            "raw": "API_endpoint/path",
+            "host": [
+                "API_server_url"
+            ],
+            "path": [
+                "endpoint_path"
+            ]
+        }
+    },
+    "response": []
+}

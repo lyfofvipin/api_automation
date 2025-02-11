@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "newman": "^6.2.1"
+  },
+  "scripts": {
+    "test:api:qa": "newman run",
+  }
+}

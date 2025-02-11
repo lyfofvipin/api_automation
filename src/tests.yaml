@@ -1,0 +1,21 @@
+# Write your testsuites here
+
+CollectionName: "Test Collection"
+
+TestSuite1:
+  name: "testcase1"
+  method: "GET"
+  endpoint: "{{your_env_var}}/api/test"
+  js_testcase_file_path: "src/testcases/testcases.js"
+
+TestSuite2:
+  name: "testcase2"
+  method: "POST"
+  endpoint: "https://127.0.0.1:5000/api/test/post"
+  js_testcase_file_path: "src/testcases/testcases.js"
+  body_raw:
+    parm1: value1
+    parm2:
+     - value1
+     - value2
+     - value3
